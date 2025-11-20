@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search License Plate</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 6em;
+            gap: 3rem;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .content {
+            flex: 2;
+        }
+
+        .vehicle-details, .image-container {
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        .result-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .image-container img {
+            width: 100%;
+            max-width: 300px;
+            margin: 10px 0;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>Search License Plate</h1>
+        <ul>
+            <li><a href="/home">Home</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <div class="content">
+            <h2>Search License Plate</h2>
+            <form action="/search" method="POST">
+                <input type="text" name="number_plate" placeholder="Enter License Plate" required>
+                <button type="submit">Search</button>
+            </form>
+
+            {% if vehicle_data %}
+            <div class="result-container">
+
+                <!-- Vehicle Details Section -->
+                <div class="vehicle-details">
+                    <h3>Vehicle Details</h3>
+                    <p><strong>License No:</strong> {{ vehicle_data.license_no }}</p>
+
+                    <h4>Detected At:</h4>
+                    <ul>
+                        {% for d in detections %}
+                            <li>{{ d.detected_at }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Vehicle Images Section -->
+                <div class="image-container">
+                    <h3>Vehicle Images</h3>
+
+                    {% if images %}
+                        {% for img in images %}
+                            <img src="{{ url_for('static', filename=img) }}" alt="Vehicle Image">
+                        {% endfor %}
+                    {% else %}
+                        <p>No images found</p>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            {% elif error %}
+            <div class="error-message">
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</body>
+</html>
